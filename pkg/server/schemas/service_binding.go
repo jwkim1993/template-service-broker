@@ -1,7 +1,7 @@
-package apis
+package schemas
 
 type ServiceBindingRequest struct {
-	Conext       map[string]string           `json:"context,omitempty"`
+	Context      map[string]string           `json:"context,omitempty"`
 	ServiceId    string                      `json:"service_id"`
 	PlanId       string                      `json:"plan_id"`
 	BindResource ServiceBindingResouceObject `json:"bind_resource,omitempty"`
@@ -43,4 +43,8 @@ type ServiceBindingEndpoint struct {
 	Host     string   `json:"host"`
 	Ports    []string `json:"ports"`
 	Protocol string   `json:"protocol,omitempty"`
+}
+
+type AsyncOperation struct {
+	Operation string `json:"operation"`
 }
