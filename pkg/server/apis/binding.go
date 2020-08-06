@@ -61,6 +61,12 @@ func BindingServiceInstance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	/*
+		TODO: templateInstance operator에서 생성된 리소스에 대한 정보(name,namespace,kind) 업데이트 해주면,
+			  templateInstance에서 리소스 정보 얻어서 조회하도록 수정.
+			  (현재는 업데이트 안되서 template 까지 조회 해야함)
+	*/
+
 	// get templateinstance info
 	templateInstance, err := internal.GetTemplateInstance(c, types.NamespacedName{Name: instanceName, Namespace: instanceNameSpace})
 	if err != nil {
