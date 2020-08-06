@@ -51,24 +51,28 @@ func BindingServiceInstance(w http.ResponseWriter, r *http.Request) {
 	SchemeBuilder := runtime.NewSchemeBuilder()
 	if err := SchemeBuilder.AddToScheme(s); err != nil {
 		logBind.Error(err, "cannot add Template/Templateinstance scheme")
+		return
 	}
 
 	// connect k8s client
 	c, err := internal.Client(client.Options{Scheme: s})
 	if err != nil {
 		log.Error(err, "cannot connect k8s api server")
+		return
 	}
 
 	// get templateinstance info
 	templateInstance, err := internal.GetTemplateInstance(c, types.NamespacedName{Name: instanceName, Namespace: instanceNameSpace})
 	if err != nil {
 		log.Error(err, "cannot get templateinstance info")
+		return
 	}
 
 	// get template info
 	template, err := internal.GetTemplate(c, types.NamespacedName{Name: templateInstance.Spec.Template.Metadata.Name, Namespace: instanceNameSpace})
 	if err != nil {
 		log.Error(err, "cannot get template info")
+		return
 	}
 
 	// parse object info in template info
@@ -77,6 +81,7 @@ func BindingServiceInstance(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			logBind.Error(err, "error occurs while converting json")
 			w.WriteHeader(http.StatusBadRequest)
+			return
 		}
 
 		//get kind, namespace, name of object
@@ -89,10 +94,8 @@ func BindingServiceInstance(w http.ResponseWriter, r *http.Request) {
 				namespace = getParameter(templateInstance, namespace)
 			}
 		}
-		if name != "" {
-			if strings.Contains(name, "{") {
-				name = getParameter(templateInstance, name)
-			}
+		if strings.Contains(name, "{") {
+			name = getParameter(templateInstance, name)
 		}
 
 		if strings.Compare(kind, "Service") == 0 {
